@@ -49,8 +49,8 @@ export class PgStorage implements IStorage {
 
   async createUser(user: InsertUser): Promise<User> {
     const result = await sql`
-      INSERT INTO users (username, email, display_name) 
-      VALUES (${user.username}, ${user.email}, ${user.displayName}) 
+      INSERT INTO users (username, password) 
+      VALUES (${user.username}, ${user.password}) 
       RETURNING *
     `;
     return snakeToCamel(result[0]) as User;
@@ -147,15 +147,15 @@ export class PgStorage implements IStorage {
     
     values.push(id);
     
-    // Execute the query using tagged template literal
-    const queryText = `
+    // Execute the query using prepared statement
+    const setClause = setClauses.join(', ');
+    const result = await sql`
       UPDATE datasets 
-      SET ${setClauses.join(', ')} 
-      WHERE id = $${paramIndex}
+      SET ${sql.unsafe(setClause)} 
+      WHERE id = ${id}
       RETURNING *
     `;
     
-    const result = await sql.query(queryText, values);
     if (result.length === 0) return undefined;
     
     return snakeToCamel(result[0]) as Dataset;
