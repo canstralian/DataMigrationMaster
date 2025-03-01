@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +13,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { apiRequest } from "@/lib/queryClient";
 
 // Schema for Kaggle credentials
@@ -30,7 +37,9 @@ interface KaggleAuthProps {
 
 export default function KaggleAuth({ onAuthenticated }: KaggleAuthProps) {
   const { toast } = useToast();
-  const [authStatus, setAuthStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [authStatus, setAuthStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Setup form
@@ -45,12 +54,16 @@ export default function KaggleAuth({ onAuthenticated }: KaggleAuthProps) {
   // Check if already authenticated
   const checkAuthStatus = async () => {
     try {
-      const response = await apiRequest({
-        url: "/api/kaggle/auth/status",
+      const response = await fetch("/api/kaggle/auth/status", {
         method: "GET",
+        credentials: "include",
       });
-      
-      const data = response as { authenticated: boolean };
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
       setIsAuthenticated(data.authenticated);
       return data.authenticated;
     } catch (error) {
@@ -68,11 +81,16 @@ export default function KaggleAuth({ onAuthenticated }: KaggleAuthProps) {
   const onSubmit = async (data: KaggleCredentials) => {
     setAuthStatus("loading");
     try {
-      await apiRequest({
-        url: "/api/kaggle/auth",
+      const response = await fetch("/api/kaggle/auth", {
         method: "POST",
-        data,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include",
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       setAuthStatus("success");
       setIsAuthenticated(true);
@@ -89,7 +107,8 @@ export default function KaggleAuth({ onAuthenticated }: KaggleAuthProps) {
       setAuthStatus("error");
       toast({
         title: "Authentication Failed",
-        description: "Could not authenticate with Kaggle using the provided credentials",
+        description:
+          "Could not authenticate with Kaggle using the provided credentials",
         variant: "destructive",
       });
     }
@@ -98,10 +117,14 @@ export default function KaggleAuth({ onAuthenticated }: KaggleAuthProps) {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await apiRequest({
-        url: "/api/kaggle/auth",
+      const response = await fetch("/api/kaggle/auth", {
         method: "DELETE",
+        credentials: "include",
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       setIsAuthenticated(false);
       form.reset();
@@ -132,7 +155,9 @@ export default function KaggleAuth({ onAuthenticated }: KaggleAuthProps) {
           <div className="space-y-4">
             <div className="p-4 bg-green-50 text-green-800 rounded-md">
               <p className="text-sm font-medium">Authenticated with Kaggle</p>
-              <p className="text-xs mt-1">Your credentials are securely stored for this session.</p>
+              <p className="text-xs mt-1">
+                Your credentials are securely stored for this session.
+              </p>
             </div>
             <Button variant="outline" onClick={handleLogout} className="w-full">
               Clear Credentials
@@ -161,22 +186,24 @@ export default function KaggleAuth({ onAuthenticated }: KaggleAuthProps) {
                   <FormItem>
                     <FormLabel>API Key</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
-                        {...field} 
+                      <Input
+                        type="password"
+                        placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                type="submit"
+                className="w-full"
                 disabled={authStatus === "loading"}
               >
-                {authStatus === "loading" ? "Authenticating..." : "Authenticate"}
+                {authStatus === "loading"
+                  ? "Authenticating..."
+                  : "Authenticate"}
               </Button>
             </form>
           </Form>
@@ -184,9 +211,9 @@ export default function KaggleAuth({ onAuthenticated }: KaggleAuthProps) {
       </CardContent>
       <CardFooter className="flex flex-col items-start text-xs text-neutral-600">
         <p>You can find your Kaggle API key in your account settings.</p>
-        <a 
-          href="https://www.kaggle.com/settings/account" 
-          target="_blank" 
+        <a
+          href="https://www.kaggle.com/settings/account"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-secondary hover:underline mt-1"
         >

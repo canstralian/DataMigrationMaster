@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 interface DatasetCardPreviewProps {
   markdown: string;
@@ -9,7 +9,11 @@ interface DatasetCardPreviewProps {
   onDownload?: () => void;
 }
 
-export default function DatasetCardPreview({ markdown, onEdit, onDownload }: DatasetCardPreviewProps) {
+export default function DatasetCardPreview({
+  markdown,
+  onEdit,
+  onDownload,
+}: DatasetCardPreviewProps) {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [editedMarkdown, setEditedMarkdown] = useState(markdown);
@@ -52,7 +56,7 @@ export default function DatasetCardPreview({ markdown, onEdit, onDownload }: Dat
           description: "Failed to copy to clipboard: " + err,
           variant: "destructive",
         });
-      }
+      },
     );
   };
 
@@ -101,7 +105,9 @@ export default function DatasetCardPreview({ markdown, onEdit, onDownload }: Dat
           />
         ) : (
           <div className="w-full h-[500px] overflow-auto bg-neutral-50 p-4 rounded-md">
-            <pre className="whitespace-pre-wrap font-mono text-sm">{markdown}</pre>
+            <pre className="whitespace-pre-wrap font-mono text-sm">
+              {markdown}
+            </pre>
           </div>
         )}
       </CardContent>

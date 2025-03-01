@@ -1,4 +1,4 @@
-import { DatasetFile } from '@shared/schema';
+import { DatasetFile } from "@shared/schema";
 
 export interface GitHubFile {
   name: string;
@@ -35,42 +35,49 @@ export async function getRepositoryInfo(repoUrl: string): Promise<GitHubRepo> {
   // e.g., https://github.com/username/repository
   const urlPattern = /github\.com\/([^\/]+)\/([^\/]+)/;
   const match = repoUrl.match(urlPattern);
-  
+
   if (!match) {
-    throw new Error('Invalid GitHub repository URL');
+    throw new Error("Invalid GitHub repository URL");
   }
-  
+
   const owner = match[1];
   const repo = match[2];
-  
+
   try {
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-      headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : '',
-      }
-    });
-    
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}`,
+      {
+        headers: {
+          Accept: "application/vnd.github.v3+json",
+          Authorization: process.env.GITHUB_TOKEN
+            ? `token ${process.env.GITHUB_TOKEN}`
+            : "",
+        },
+      },
+    );
+
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `GitHub API error: ${response.status} ${response.statusText}`,
+      );
     }
-    
+
     return await response.json();
   } catch (error) {
-    console.error('Error fetching GitHub repository:', error);
-    
+    console.error("Error fetching GitHub repository:", error);
+
     // Return mock data for demo or when API fails
     return {
       name: repo,
-      description: 'Repository description unavailable',
+      description: "Repository description unavailable",
       owner: {
-        login: owner
+        login: owner,
       },
-      default_branch: 'main',
+      default_branch: "main",
       size: 0,
       updated_at: new Date().toISOString(),
       stargazers_count: 0,
-      forks_count: 0
+      forks_count: 0,
     };
   }
 }
@@ -84,92 +91,96 @@ export async function getRepositoryInfo(repoUrl: string): Promise<GitHubRepo> {
  */
 export async function listRepositoryFiles(
   repoUrl: string,
-  path: string = '',
-  branch: string = ''
+  path: string = "",
+  branch: string = "",
 ): Promise<GitHubFile[]> {
   // Extract owner and repo from URL
   const urlPattern = /github\.com\/([^\/]+)\/([^\/]+)/;
   const match = repoUrl.match(urlPattern);
-  
+
   if (!match) {
-    throw new Error('Invalid GitHub repository URL');
+    throw new Error("Invalid GitHub repository URL");
   }
-  
+
   const owner = match[1];
   const repo = match[2];
-  
+
   try {
     // If branch isn't provided, determine the default branch
     if (!branch) {
       const repoInfo = await getRepositoryInfo(repoUrl);
       branch = repoInfo.default_branch;
     }
-    
+
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
-    
+
     const response = await fetch(apiUrl, {
       headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : '',
-      }
+        Accept: "application/vnd.github.v3+json",
+        Authorization: process.env.GITHUB_TOKEN
+          ? `token ${process.env.GITHUB_TOKEN}`
+          : "",
+      },
     });
-    
+
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `GitHub API error: ${response.status} ${response.statusText}`,
+      );
     }
-    
+
     const data = await response.json();
-    
+
     // Handle case where response is a single file, not an array
     const files = Array.isArray(data) ? data : [data];
-    
-    return files.map(file => ({
+
+    return files.map((file) => ({
       name: file.name,
       path: file.path,
       size: file.size,
       type: file.type,
-      download_url: file.download_url
+      download_url: file.download_url,
     }));
   } catch (error) {
-    console.error('Error listing GitHub repository files:', error);
-    
+    console.error("Error listing GitHub repository files:", error);
+
     // Return mock data for demo or when API fails
     return [
       {
-        name: 'train.csv',
-        path: 'train.csv',
+        name: "train.csv",
+        path: "train.csv",
         size: 2300000,
-        type: 'file',
-        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/train.csv`
+        type: "file",
+        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/train.csv`,
       },
       {
-        name: 'test.csv',
-        path: 'test.csv',
+        name: "test.csv",
+        path: "test.csv",
         size: 1100000,
-        type: 'file',
-        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/test.csv`
+        type: "file",
+        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/test.csv`,
       },
       {
-        name: 'validation.csv',
-        path: 'validation.csv',
+        name: "validation.csv",
+        path: "validation.csv",
         size: 650000,
-        type: 'file',
-        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/validation.csv`
+        type: "file",
+        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/validation.csv`,
       },
       {
-        name: 'README.md',
-        path: 'README.md',
+        name: "README.md",
+        path: "README.md",
         size: 12000,
-        type: 'file',
-        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/README.md`
+        type: "file",
+        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/README.md`,
       },
       {
-        name: 'LICENSE',
-        path: 'LICENSE',
+        name: "LICENSE",
+        path: "LICENSE",
         size: 4000,
-        type: 'file',
-        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/LICENSE`
-      }
+        type: "file",
+        download_url: `https://raw.githubusercontent.com/${owner}/${repo}/main/LICENSE`,
+      },
     ];
   }
 }
@@ -182,19 +193,19 @@ export async function listRepositoryFiles(
  */
 export function convertToDatasetFiles(
   githubFiles: GitHubFile[],
-  datasetId: number
+  datasetId: number,
 ): DatasetFile[] {
   return githubFiles
-    .filter(file => file.type === 'file')
-    .map(file => ({
+    .filter((file) => file.type === "file")
+    .map((file) => ({
       id: 0, // Will be assigned by storage
       datasetId,
       name: file.name,
       path: file.path,
       size: file.size,
-      type: file.name.split('.').pop() || '',
+      type: file.name.split(".").pop() || "",
       selected: true,
-      createdAt: new Date()
+      createdAt: new Date(),
     }));
 }
 
@@ -206,14 +217,16 @@ export function convertToDatasetFiles(
 export async function downloadFile(downloadUrl: string): Promise<string> {
   try {
     const response = await fetch(downloadUrl);
-    
+
     if (!response.ok) {
-      throw new Error(`GitHub download error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `GitHub download error: ${response.status} ${response.statusText}`,
+      );
     }
-    
+
     return await response.text();
   } catch (error) {
-    console.error('Error downloading file from GitHub:', error);
+    console.error("Error downloading file from GitHub:", error);
     throw error;
   }
 }

@@ -1,4 +1,12 @@
-import { pgTable, text, serial, integer, boolean, jsonb, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  jsonb,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -23,10 +31,10 @@ export type Platform = z.infer<typeof PlatformEnum>;
 
 // Define the status enum for migration jobs
 export const MigrationStatusEnum = z.enum([
-  "pending", 
-  "in_progress", 
-  "completed", 
-  "failed"
+  "pending",
+  "in_progress",
+  "completed",
+  "failed",
 ]);
 export type MigrationStatus = z.infer<typeof MigrationStatusEnum>;
 
@@ -46,8 +54,11 @@ export const datasets = pgTable("datasets", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertDatasetSchema = createInsertSchema(datasets)
-  .omit({ id: true, createdAt: true, updatedAt: true });
+export const insertDatasetSchema = createInsertSchema(datasets).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
 export type InsertDataset = z.infer<typeof insertDatasetSchema>;
 export type Dataset = typeof datasets.$inferSelect;
@@ -71,8 +82,14 @@ export const migrationJobs = pgTable("migration_jobs", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertMigrationJobSchema = createInsertSchema(migrationJobs)
-  .omit({ id: true, progress: true, error: true, startedAt: true, completedAt: true, createdAt: true });
+export const insertMigrationJobSchema = createInsertSchema(migrationJobs).omit({
+  id: true,
+  progress: true,
+  error: true,
+  startedAt: true,
+  completedAt: true,
+  createdAt: true,
+});
 
 export type InsertMigrationJob = z.infer<typeof insertMigrationJobSchema>;
 export type MigrationJob = typeof migrationJobs.$inferSelect;
@@ -90,8 +107,16 @@ export const migrationSteps = pgTable("migration_steps", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertMigrationStepSchema = createInsertSchema(migrationSteps)
-  .omit({ id: true, progress: true, message: true, startedAt: true, completedAt: true, createdAt: true });
+export const insertMigrationStepSchema = createInsertSchema(
+  migrationSteps,
+).omit({
+  id: true,
+  progress: true,
+  message: true,
+  startedAt: true,
+  completedAt: true,
+  createdAt: true,
+});
 
 export type InsertMigrationStep = z.infer<typeof insertMigrationStepSchema>;
 export type MigrationStep = typeof migrationSteps.$inferSelect;
@@ -108,8 +133,10 @@ export const datasetFiles = pgTable("dataset_files", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertDatasetFileSchema = createInsertSchema(datasetFiles)
-  .omit({ id: true, createdAt: true });
+export const insertDatasetFileSchema = createInsertSchema(datasetFiles).omit({
+  id: true,
+  createdAt: true,
+});
 
 export type InsertDatasetFile = z.infer<typeof insertDatasetFileSchema>;
 export type DatasetFile = typeof datasetFiles.$inferSelect;
@@ -126,8 +153,9 @@ export const analysisReports = pgTable("analysis_reports", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertAnalysisReportSchema = createInsertSchema(analysisReports)
-  .omit({ id: true, createdAt: true });
+export const insertAnalysisReportSchema = createInsertSchema(
+  analysisReports,
+).omit({ id: true, createdAt: true });
 
 export type InsertAnalysisReport = z.infer<typeof insertAnalysisReportSchema>;
 export type AnalysisReport = typeof analysisReports.$inferSelect;

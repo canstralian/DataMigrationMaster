@@ -1,5 +1,5 @@
-URL: https://huggingface.co/docs/datasets/upload_dataset
----
+## URL: https://huggingface.co/docs/datasets/upload_dataset
+
 Datasets documentation
 
 Share a dataset to the Hub
@@ -21,15 +21,11 @@ Join the Hugging Face community
 
 and get access to the augmented documentation experience
 
-
 Collaborate on models, datasets and Spaces
-
 
 Faster examples with accelerated inference
 
-
 Switch between documentation themes
-
 
 [Sign Up](https://huggingface.co/join)
 
@@ -60,7 +56,6 @@ A repository hosts all your dataset files, including the revision history, makin
 
 Text file extensions are not tracked by Git LFS by default, and if they’re greater than 10MB, they will not be committed and uploaded. Take a look at the `.gitattributes` file in your repository for a complete list of tracked file extensions. For this tutorial, you can use the following sample `.csv` files since they’re small: [train.csv](https://huggingface.co/datasets/stevhliu/demo/raw/main/train.csv), [test.csv](https://huggingface.co/datasets/stevhliu/demo/raw/main/test.csv).
 
-
 ![](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/datasets/upload_files.png)
 
 2. Drag and drop your dataset files and add a brief descriptive commit message.
@@ -83,14 +78,13 @@ Adding a Dataset card is super valuable for helping users find your dataset and 
 
 You can also look at the [Dataset Card specifications](https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1), which has a complete set of (but not required) tag options like `annotations_creators`, to help you choose the appropriate tags.
 
-
 ![](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/datasets/metadata_ui.png)
 
 3. Click on the **Import dataset card template** link at the top of the editor to automatically create a dataset card template. Filling out the template is a great way to introduce your dataset to the community and help users understand how to use it. For a detailed example of what a good Dataset card should look like, take a look at the [CNN DailyMail Dataset card](https://huggingface.co/datasets/cnn_dailymail).
 
 ### Load dataset
 
-Once your dataset is stored on the Hub, anyone can load it with the [load\_dataset()](https://huggingface.co/docs/datasets/v3.3.2/en/package_reference/loading_methods#datasets.load_dataset) function:
+Once your dataset is stored on the Hub, anyone can load it with the [load_dataset()](https://huggingface.co/docs/datasets/v3.3.2/en/package_reference/loading_methods#datasets.load_dataset) function:
 
 Copied
 
@@ -102,7 +96,7 @@ Copied
 
 ## Upload with Python
 
-Users who prefer to upload a dataset programmatically can use the [huggingface\_hub](https://huggingface.co/docs/huggingface_hub/index) library. This library allows users to interact with the Hub from Python.
+Users who prefer to upload a dataset programmatically can use the [huggingface_hub](https://huggingface.co/docs/huggingface_hub/index) library. This library allows users to interact with the Hub from Python.
 
 1. Begin by installing the library:
 
@@ -140,7 +134,7 @@ Copied
 >>> dataset.push_to_hub("stevhliu/private_processed_demo", private=True)
 ```
 
-To add a new configuration (or subset) to a dataset or to add a new split (train/validation/test), please refer to the [Dataset.push\_to\_hub()](https://huggingface.co/docs/datasets/v3.3.2/en/package_reference/main_classes#datasets.Dataset.push_to_hub) documentation.
+To add a new configuration (or subset) to a dataset or to add a new split (train/validation/test), please refer to the [Dataset.push_to_hub()](https://huggingface.co/docs/datasets/v3.3.2/en/package_reference/main_classes#datasets.Dataset.push_to_hub) documentation.
 
 ### Privacy
 

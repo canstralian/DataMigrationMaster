@@ -16,23 +16,27 @@ import DatasetTransform from "@/components/datasets/DatasetTransform";
 
 export default function Transform() {
   const [_, navigate] = useLocation();
-  const [selectedDatasetId, setSelectedDatasetId] = useState<number | null>(null);
+  const [selectedDatasetId, setSelectedDatasetId] = useState<number | null>(
+    null,
+  );
   const [authStep, setAuthStep] = useState<"auth" | "transform">("auth");
 
   // Query to fetch datasets
   const { data: datasets, isLoading: datasetsLoading } = useQuery<Dataset[]>({
-    queryKey: ['/api/datasets'],
+    queryKey: ["/api/datasets"],
   });
 
   // Query to fetch dataset files
   const { data: files, isLoading: filesLoading } = useQuery<DatasetFile[]>({
-    queryKey: ['/api/datasets', selectedDatasetId, 'files'],
+    queryKey: ["/api/datasets", selectedDatasetId, "files"],
     enabled: !!selectedDatasetId,
   });
 
   // Query to check Kaggle auth status
-  const { data: authStatus, refetch: refetchAuthStatus } = useQuery<{ authenticated: boolean }>({
-    queryKey: ['/api/kaggle/auth/status'],
+  const { data: authStatus, refetch: refetchAuthStatus } = useQuery<{
+    authenticated: boolean;
+  }>({
+    queryKey: ["/api/kaggle/auth/status"],
   });
 
   // Effect to automatically move to transform step if already authenticated
@@ -51,24 +55,21 @@ export default function Transform() {
     refetchAuthStatus();
   };
 
-  const selectedDataset = selectedDatasetId 
-    ? datasets?.find(d => d.id === selectedDatasetId) 
+  const selectedDataset = selectedDatasetId
+    ? datasets?.find((d) => d.id === selectedDatasetId)
     : null;
 
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="mb-8">
-        <Button 
-          variant="outline" 
-          onClick={() => navigate(-1)}
-          className="mb-4"
-        >
+        <Button variant="outline" onClick={() => navigate(-1)} className="mb-4">
           &larr; Back
         </Button>
         <h1 className="text-3xl font-bold mb-2">Dataset Transformations</h1>
         <p className="text-neutral-600 max-w-3xl">
-          Apply transformations to your Kaggle datasets using Python code generation. 
-          You can remove columns, rename fields, split datasets, and run SQL queries.
+          Apply transformations to your Kaggle datasets using Python code
+          generation. You can remove columns, rename fields, split datasets, and
+          run SQL queries.
         </p>
       </div>
 
@@ -81,8 +82,8 @@ export default function Transform() {
                   <label className="block text-sm font-medium mb-2">
                     Select Dataset
                   </label>
-                  <Select 
-                    onValueChange={handleDatasetSelect} 
+                  <Select
+                    onValueChange={handleDatasetSelect}
                     disabled={datasetsLoading}
                   >
                     <SelectTrigger>
@@ -102,7 +103,9 @@ export default function Transform() {
                   <div className="space-y-2">
                     <h3 className="font-medium">{selectedDataset.name}</h3>
                     {selectedDataset.description && (
-                      <p className="text-sm text-neutral-600">{selectedDataset.description}</p>
+                      <p className="text-sm text-neutral-600">
+                        {selectedDataset.description}
+                      </p>
                     )}
                     <div className="text-xs text-neutral-500">
                       <p>Platform: {selectedDataset.currentPlatform}</p>
@@ -118,18 +121,16 @@ export default function Transform() {
         <div className="lg:col-span-2">
           {authStep === "auth" ? (
             <KaggleAuth onAuthenticated={handleAuthSuccess} />
+          ) : selectedDataset && files ? (
+            <DatasetTransform dataset={selectedDataset} files={files} />
           ) : (
-            selectedDataset && files ? (
-              <DatasetTransform dataset={selectedDataset} files={files} />
-            ) : (
-              <div className="bg-neutral-100 p-6 rounded-lg text-center">
-                <p className="text-neutral-600">
-                  {selectedDatasetId 
-                    ? "Loading dataset files..." 
-                    : "Select a dataset to start transforming"}
-                </p>
-              </div>
-            )
+            <div className="bg-neutral-100 p-6 rounded-lg text-center">
+              <p className="text-neutral-600">
+                {selectedDatasetId
+                  ? "Loading dataset files..."
+                  : "Select a dataset to start transforming"}
+              </p>
+            </div>
           )}
         </div>
       </div>

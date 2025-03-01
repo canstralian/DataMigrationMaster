@@ -1,10 +1,16 @@
-import { Platform } from '@shared/schema';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { HuggingFaceSVG, GitHubIcon, KaggleIcon } from '@/components/ui/icons';
+import { Platform } from "@shared/schema";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { HuggingFaceSVG, GitHubIcon, KaggleIcon } from "@/components/ui/icons";
 
 interface DestinationConfigurationProps {
   platform: Platform;
@@ -35,17 +41,17 @@ export default function DestinationConfiguration({
   validateSchema,
   onValidateSchemaChange,
   runAnalysis,
-  onRunAnalysisChange
+  onRunAnalysisChange,
 }: DestinationConfigurationProps) {
   let PlatformIcon;
   switch (platform) {
-    case 'github':
+    case "github":
       PlatformIcon = GitHubIcon;
       break;
-    case 'kaggle':
+    case "kaggle":
       PlatformIcon = KaggleIcon;
       break;
-    case 'huggingface':
+    case "huggingface":
       PlatformIcon = HuggingFaceSVG;
       break;
   }
@@ -61,29 +67,29 @@ export default function DestinationConfiguration({
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="repository-name">
-            {platform === 'github' 
-              ? 'Repository Name' 
-              : platform === 'kaggle' 
-                ? 'Dataset Name' 
-                : 'Dataset ID'}
+            {platform === "github"
+              ? "Repository Name"
+              : platform === "kaggle"
+                ? "Dataset Name"
+                : "Dataset ID"}
           </Label>
           <Input
             id="repository-name"
             placeholder={
-              platform === 'github' 
-                ? 'my-awesome-dataset' 
-                : platform === 'kaggle' 
-                  ? 'awesome-dataset' 
-                  : 'username/awesome-dataset'
+              platform === "github"
+                ? "my-awesome-dataset"
+                : platform === "kaggle"
+                  ? "awesome-dataset"
+                  : "username/awesome-dataset"
             }
             value={repositoryName}
             onChange={(e) => onRepositoryNameChange(e.target.value)}
           />
           <p className="text-xs text-neutral-500">
-            {platform === 'github' 
-              ? 'This will create a new repository in your GitHub account' 
-              : platform === 'kaggle' 
-                ? 'This will create a new dataset in your Kaggle account' 
+            {platform === "github"
+              ? "This will create a new repository in your GitHub account"
+              : platform === "kaggle"
+                ? "This will create a new dataset in your Kaggle account"
                 : 'For Hugging Face, use the format "username/dataset-name"'}
           </p>
         </div>
@@ -91,14 +97,12 @@ export default function DestinationConfiguration({
         <div className="flex items-center justify-between">
           <div>
             <Label htmlFor="is-private" className="block mb-1">
-              {platform === 'github' 
-                ? 'Private Repository' 
-                : 'Private Dataset'}
+              {platform === "github" ? "Private Repository" : "Private Dataset"}
             </Label>
             <p className="text-xs text-neutral-500">
-              {isPrivate 
-                ? 'Only you will have access to this dataset' 
-                : 'Everyone will be able to access this dataset'}
+              {isPrivate
+                ? "Only you will have access to this dataset"
+                : "Everyone will be able to access this dataset"}
             </p>
           </div>
           <Switch
@@ -108,13 +112,10 @@ export default function DestinationConfiguration({
           />
         </div>
 
-        {platform === 'huggingface' && (
+        {platform === "huggingface" && (
           <div className="space-y-2">
             <Label htmlFor="dataset-type">Dataset Type</Label>
-            <Select
-              value={datasetType}
-              onValueChange={onDatasetTypeChange}
-            >
+            <Select value={datasetType} onValueChange={onDatasetTypeChange}>
               <SelectTrigger id="dataset-type">
                 <SelectValue placeholder="Select dataset type" />
               </SelectTrigger>
@@ -127,7 +128,8 @@ export default function DestinationConfiguration({
               </SelectContent>
             </Select>
             <p className="text-xs text-neutral-500">
-              This helps Hugging Face optimize the dataset preview and discoverability
+              This helps Hugging Face optimize the dataset preview and
+              discoverability
             </p>
           </div>
         )}

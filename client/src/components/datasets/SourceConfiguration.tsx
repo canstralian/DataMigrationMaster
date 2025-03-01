@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Platform } from '@shared/schema';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
+import { useState, useEffect } from "react";
+import { Platform } from "@shared/schema";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface SourceConfigurationProps {
   platform: Platform;
@@ -38,10 +38,10 @@ export default function SourceConfiguration({
   onUrlChange,
   selectedFiles,
   onSelectedFilesChange,
-  folder = '',
+  folder = "",
   onFolderChange,
-  branch = '',
-  onBranchChange
+  branch = "",
+  onBranchChange,
 }: SourceConfigurationProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -52,25 +52,30 @@ export default function SourceConfiguration({
 
   const fetchFiles = async () => {
     if (!sourceUrl) return;
-    
+
     setIsLoading(true);
     try {
       const queryParams = new URLSearchParams();
-      if (folder) queryParams.append('folder', folder);
-      if (branch) queryParams.append('branch', branch);
-      
+      if (folder) queryParams.append("folder", folder);
+      if (branch) queryParams.append("branch", branch);
+
       const response = await apiRequest(
-        'GET', 
-        `/api/platforms/${platform}/files?url=${encodeURIComponent(sourceUrl)}&${queryParams.toString()}`
+        "GET",
+        `/api/platforms/${platform}/files?url=${encodeURIComponent(sourceUrl)}&${queryParams.toString()}`,
       );
-      
+
       const data = await response.json();
-      setFiles(data.map((file: any) => ({ ...file, selected: selectedFiles.includes(file.path) })));
+      setFiles(
+        data.map((file: any) => ({
+          ...file,
+          selected: selectedFiles.includes(file.path),
+        })),
+      );
     } catch (error) {
       toast({
-        title: 'Error',
-        description: `Failed to fetch files from ${platform}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: 'destructive',
+        title: "Error",
+        description: `Failed to fetch files from ${platform}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -102,49 +107,49 @@ export default function SourceConfiguration({
   };
 
   const toggleFileSelection = (path: string) => {
-    const newFiles = files.map(file => 
-      file.path === path ? { ...file, selected: !file.selected } : file
+    const newFiles = files.map((file) =>
+      file.path === path ? { ...file, selected: !file.selected } : file,
     );
     setFiles(newFiles);
-    
+
     const newSelectedFiles = newFiles
-      .filter(file => file.selected)
-      .map(file => file.path);
-    
+      .filter((file) => file.selected)
+      .map((file) => file.path);
+
     onSelectedFilesChange(newSelectedFiles);
   };
 
   const toggleAllFiles = (selected: boolean) => {
-    const newFiles = files.map(file => ({ ...file, selected }));
+    const newFiles = files.map((file) => ({ ...file, selected }));
     setFiles(newFiles);
-    
-    const newSelectedFiles = selected ? newFiles.map(file => file.path) : [];
+
+    const newSelectedFiles = selected ? newFiles.map((file) => file.path) : [];
     onSelectedFilesChange(newSelectedFiles);
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  let placeholderText = '';
+  let placeholderText = "";
   switch (platform) {
-    case 'github':
-      placeholderText = 'https://github.com/username/repository';
+    case "github":
+      placeholderText = "https://github.com/username/repository";
       break;
-    case 'kaggle':
-      placeholderText = 'https://www.kaggle.com/datasets/username/dataset-name';
+    case "kaggle":
+      placeholderText = "https://www.kaggle.com/datasets/username/dataset-name";
       break;
-    case 'huggingface':
-      placeholderText = 'https://huggingface.co/datasets/username/dataset-name';
+    case "huggingface":
+      placeholderText = "https://huggingface.co/datasets/username/dataset-name";
       break;
   }
 
-  const showFolderInput = platform === 'github';
-  const showBranchInput = platform === 'github';
+  const showFolderInput = platform === "github";
+  const showBranchInput = platform === "github";
 
   return (
     <Card>
@@ -155,7 +160,7 @@ export default function SourceConfiguration({
         <form onSubmit={handleUrlSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="source-url">
-              {platform === 'github' ? 'Repository URL' : 'Dataset URL'}
+              {platform === "github" ? "Repository URL" : "Dataset URL"}
             </Label>
             <div className="flex space-x-2">
               <Input
@@ -166,7 +171,7 @@ export default function SourceConfiguration({
                 className="flex-1"
               />
               <Button type="submit" variant="secondary">
-                {sourceUrl ? 'Refresh' : 'Load'}
+                {sourceUrl ? "Refresh" : "Load"}
               </Button>
             </div>
           </div>
@@ -174,9 +179,7 @@ export default function SourceConfiguration({
 
         {showFolderInput && (
           <form onSubmit={handleFolderSubmit} className="space-y-2">
-            <Label htmlFor="folder-path">
-              Folder Path (Optional)
-            </Label>
+            <Label htmlFor="folder-path">Folder Path (Optional)</Label>
             <div className="flex space-x-2">
               <Input
                 id="folder-path"
@@ -197,9 +200,7 @@ export default function SourceConfiguration({
 
         {showBranchInput && (
           <form onSubmit={handleBranchSubmit} className="space-y-2">
-            <Label htmlFor="branch-name">
-              Branch (Optional)
-            </Label>
+            <Label htmlFor="branch-name">Branch (Optional)</Label>
             <div className="flex space-x-2">
               <Input
                 id="branch-name"
@@ -226,19 +227,20 @@ export default function SourceConfiguration({
             {files.length > 0 && (
               <div className="flex items-center space-x-4">
                 <div className="text-xs text-neutral-500">
-                  {files.filter(f => f.selected).length} of {files.length} selected
+                  {files.filter((f) => f.selected).length} of {files.length}{" "}
+                  selected
                 </div>
                 <div className="flex space-x-2">
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => toggleAllFiles(true)}
                     disabled={isLoading}
                   >
                     Select All
                   </Button>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => toggleAllFiles(false)}
                     disabled={isLoading}
@@ -266,12 +268,12 @@ export default function SourceConfiguration({
             <ScrollArea className="h-[300px] border rounded-md">
               <div className="p-4 space-y-2">
                 {files.map((file) => (
-                  <div 
-                    key={file.path} 
+                  <div
+                    key={file.path}
                     className="flex items-start py-2 hover:bg-neutral-50 rounded px-2 cursor-pointer"
                     onClick={() => toggleFileSelection(file.path)}
                   >
-                    <Checkbox 
+                    <Checkbox
                       checked={file.selected}
                       onCheckedChange={() => toggleFileSelection(file.path)}
                       className="mr-3 mt-0.5"
@@ -290,11 +292,15 @@ export default function SourceConfiguration({
             </ScrollArea>
           ) : sourceUrl ? (
             <div className="text-center py-8 bg-neutral-50 rounded-md">
-              <p className="text-neutral-500">No files found. Try changing the source URL or folder.</p>
+              <p className="text-neutral-500">
+                No files found. Try changing the source URL or folder.
+              </p>
             </div>
           ) : (
             <div className="text-center py-8 bg-neutral-50 rounded-md">
-              <p className="text-neutral-500">Enter a URL and click Load to see files</p>
+              <p className="text-neutral-500">
+                Enter a URL and click Load to see files
+              </p>
             </div>
           )}
         </div>

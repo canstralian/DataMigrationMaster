@@ -1,4 +1,4 @@
-import { DatasetFile } from '@shared/schema';
+import { DatasetFile } from "@shared/schema";
 
 export interface HuggingFaceDataset {
   id: string;
@@ -30,11 +30,11 @@ function extractDatasetId(datasetUrl: string): string {
   // e.g., https://huggingface.co/datasets/username/dataset-name
   const urlPattern = /huggingface\.co\/(?:datasets\/)?([^\/]+)\/([^\/\?]+)/;
   const match = datasetUrl.match(urlPattern);
-  
+
   if (!match) {
-    throw new Error('Invalid Hugging Face dataset URL');
+    throw new Error("Invalid Hugging Face dataset URL");
   }
-  
+
   return `${match[1]}/${match[2]}`;
 }
 
@@ -43,35 +43,41 @@ function extractDatasetId(datasetUrl: string): string {
  * @param datasetUrl Hugging Face dataset URL
  * @returns Dataset information
  */
-export async function getDatasetInfo(datasetUrl: string): Promise<HuggingFaceDataset> {
+export async function getDatasetInfo(
+  datasetUrl: string,
+): Promise<HuggingFaceDataset> {
   try {
     const datasetId = extractDatasetId(datasetUrl);
-    const response = await fetch(`https://huggingface.co/api/datasets/${datasetId}`);
-    
+    const response = await fetch(
+      `https://huggingface.co/api/datasets/${datasetId}`,
+    );
+
     if (!response.ok) {
-      throw new Error(`Hugging Face API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Hugging Face API error: ${response.status} ${response.statusText}`,
+      );
     }
-    
+
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching Hugging Face dataset:', error);
-    
+    console.error("Error fetching Hugging Face dataset:", error);
+
     // Return mock data when API fails
     const datasetId = extractDatasetId(datasetUrl);
-    const [author, name] = datasetId.split('/');
-    
+    const [author, name] = datasetId.split("/");
+
     return {
       id: datasetId,
       author,
-      description: 'Dataset description unavailable',
-      citation: '',
-      license: 'Unknown',
+      description: "Dataset description unavailable",
+      citation: "",
+      license: "Unknown",
       tags: [],
       downloads: 0,
       lastModified: new Date().toISOString(),
-      paperswithcode_id: '',
-      size_categories: ['unknown']
+      paperswithcode_id: "",
+      size_categories: ["unknown"],
     };
   }
 }
@@ -81,50 +87,56 @@ export async function getDatasetInfo(datasetUrl: string): Promise<HuggingFaceDat
  * @param datasetUrl Hugging Face dataset URL
  * @returns List of files
  */
-export async function listDatasetFiles(datasetUrl: string): Promise<HuggingFaceFile[]> {
+export async function listDatasetFiles(
+  datasetUrl: string,
+): Promise<HuggingFaceFile[]> {
   try {
     const datasetId = extractDatasetId(datasetUrl);
-    const response = await fetch(`https://huggingface.co/api/datasets/${datasetId}/tree/main`);
-    
+    const response = await fetch(
+      `https://huggingface.co/api/datasets/${datasetId}/tree/main`,
+    );
+
     if (!response.ok) {
-      throw new Error(`Hugging Face API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Hugging Face API error: ${response.status} ${response.statusText}`,
+      );
     }
-    
+
     const data = await response.json();
-    
+
     return data.map((file: any) => ({
-      name: file.path.split('/').pop(),
+      name: file.path.split("/").pop(),
       path: file.path,
       size: file.size || 0,
       type: file.type,
-      lastCommit: file.lastCommit?.date || ''
+      lastCommit: file.lastCommit?.date || "",
     }));
   } catch (error) {
-    console.error('Error listing Hugging Face dataset files:', error);
-    
+    console.error("Error listing Hugging Face dataset files:", error);
+
     // Return mock data when API fails
     return [
       {
-        name: 'dataset_infos.json',
-        path: 'dataset_infos.json',
+        name: "dataset_infos.json",
+        path: "dataset_infos.json",
         size: 5000,
-        type: 'blob',
-        lastCommit: new Date().toISOString()
+        type: "blob",
+        lastCommit: new Date().toISOString(),
       },
       {
-        name: 'README.md',
-        path: 'README.md',
+        name: "README.md",
+        path: "README.md",
         size: 15000,
-        type: 'blob',
-        lastCommit: new Date().toISOString()
+        type: "blob",
+        lastCommit: new Date().toISOString(),
       },
       {
-        name: 'data',
-        path: 'data',
+        name: "data",
+        path: "data",
         size: 0,
-        type: 'tree',
-        lastCommit: new Date().toISOString()
-      }
+        type: "tree",
+        lastCommit: new Date().toISOString(),
+      },
     ];
   }
 }
@@ -139,14 +151,14 @@ export async function listDatasetFiles(datasetUrl: string): Promise<HuggingFaceF
 export async function createDataset(
   name: string,
   isPrivate: boolean = false,
-  token: string = process.env.HUGGINGFACE_TOKEN || ''
+  token: string = process.env.HUGGINGFACE_TOKEN || "",
 ): Promise<string> {
   // Note: In a real implementation, this would use the Hugging Face API
   // For demo purposes, we're just returning a constructed URL
-  
+
   // The URL would typically include the user's username
-  const username = 'username'; // This would come from the authenticated user
-  
+  const username = "username"; // This would come from the authenticated user
+
   return `https://huggingface.co/datasets/${username}/${name}`;
 }
 
@@ -162,11 +174,11 @@ export async function uploadFile(
   datasetId: string,
   filePath: string,
   content: string,
-  token: string = process.env.HUGGINGFACE_TOKEN || ''
+  token: string = process.env.HUGGINGFACE_TOKEN || "",
 ): Promise<boolean> {
   // Note: In a real implementation, this would use the Hugging Face API
   console.log(`Uploading ${filePath} to dataset ${datasetId}`);
-  
+
   // For demo purposes, we're just returning true
   return true;
 }
@@ -179,19 +191,19 @@ export async function uploadFile(
  */
 export function convertToDatasetFiles(
   hfFiles: HuggingFaceFile[],
-  datasetId: number
+  datasetId: number,
 ): DatasetFile[] {
   return hfFiles
-    .filter(file => file.type === 'blob') // Only include actual files, not directories
-    .map(file => ({
+    .filter((file) => file.type === "blob") // Only include actual files, not directories
+    .map((file) => ({
       id: 0, // Will be assigned by storage
       datasetId,
       name: file.name,
       path: file.path,
       size: file.size,
-      type: file.name.split('.').pop() || '',
+      type: file.name.split(".").pop() || "",
       selected: true,
-      createdAt: new Date()
+      createdAt: new Date(),
     }));
 }
 
@@ -201,17 +213,24 @@ export function convertToDatasetFiles(
  * @param filePath Path of the file to download
  * @returns File content
  */
-export async function downloadFile(datasetId: string, filePath: string): Promise<string> {
+export async function downloadFile(
+  datasetId: string,
+  filePath: string,
+): Promise<string> {
   try {
-    const response = await fetch(`https://huggingface.co/datasets/${datasetId}/resolve/main/${filePath}`);
-    
+    const response = await fetch(
+      `https://huggingface.co/datasets/${datasetId}/resolve/main/${filePath}`,
+    );
+
     if (!response.ok) {
-      throw new Error(`Hugging Face download error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Hugging Face download error: ${response.status} ${response.statusText}`,
+      );
     }
-    
+
     return await response.text();
   } catch (error) {
-    console.error('Error downloading file from Hugging Face:', error);
+    console.error("Error downloading file from Hugging Face:", error);
     throw error;
   }
 }

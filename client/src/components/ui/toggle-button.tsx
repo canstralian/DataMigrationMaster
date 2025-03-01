@@ -14,8 +14,8 @@ interface ToggleButtonProps {
 const ToggleButton = React.forwardRef<HTMLDivElement, ToggleButtonProps>(
   ({ options, value, onChange, className }, ref) => {
     return (
-      <div 
-        ref={ref} 
+      <div
+        ref={ref}
         className={cn("flex border-b border-neutral-200 space-x-8", className)}
       >
         {options.map((option) => (
@@ -24,9 +24,9 @@ const ToggleButton = React.forwardRef<HTMLDivElement, ToggleButtonProps>(
             onClick={() => onChange(option.value)}
             className={cn(
               "py-3 px-1 whitespace-nowrap flex items-center",
-              value === option.value 
-                ? "border-b-2 border-primary text-text font-medium tab-active" 
-                : "border-b-2 border-transparent text-neutral-500 tab"
+              value === option.value
+                ? "border-b-2 border-primary text-text font-medium tab-active"
+                : "border-b-2 border-transparent text-neutral-500 tab",
             )}
           >
             {option.label}
@@ -34,7 +34,7 @@ const ToggleButton = React.forwardRef<HTMLDivElement, ToggleButtonProps>(
         ))}
       </div>
     );
-  }
+  },
 );
 
 ToggleButton.displayName = "ToggleButton";

@@ -13,21 +13,27 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function Validation() {
   const { toast } = useToast();
-  const [selectedDatasetId, setSelectedDatasetId] = useState<number | null>(null);
+  const [selectedDatasetId, setSelectedDatasetId] = useState<number | null>(
+    null,
+  );
   const [activeTab, setActiveTab] = useState("validation");
   const [schemaText, setSchemaText] = useState("");
   const [strictMode, setStrictMode] = useState(false);
 
   // Fetch all datasets
   const { data: datasets, isLoading: isLoadingDatasets } = useQuery<Dataset[]>({
-    queryKey: ['/api/datasets'],
+    queryKey: ["/api/datasets"],
   });
 
   // Validation mutation (for demo)
   const validateMutation = useMutation({
-    mutationFn: (data: { datasetId: number, schema: string, strict: boolean }) => 
+    mutationFn: (data: {
+      datasetId: number;
+      schema: string;
+      strict: boolean;
+    }) =>
       // Note: In a real app, this endpoint would exist
-      apiRequest('POST', `/api/datasets/${data.datasetId}/validate`, data),
+      apiRequest("POST", `/api/datasets/${data.datasetId}/validate`, data),
     onSuccess: () => {
       toast({
         title: "Validation Successful",
@@ -40,7 +46,7 @@ export default function Validation() {
         description: "The dataset does not match the provided schema.",
         variant: "destructive",
       });
-    }
+    },
   });
 
   const handleValidate = () => {
@@ -66,7 +72,7 @@ export default function Validation() {
     // In a real app, we would send the schema to the backend
     const simulateValidation = () => {
       const isValid = Math.random() > 0.3; // 70% chance of success for demo
-      
+
       if (isValid) {
         toast({
           title: "Validation Successful",
@@ -75,50 +81,54 @@ export default function Validation() {
       } else {
         toast({
           title: "Validation Failed",
-          description: "The dataset does not match the provided schema. See errors below.",
+          description:
+            "The dataset does not match the provided schema. See errors below.",
           variant: "destructive",
         });
-        
+
         // Show simulated validation errors
         setValidationResults({
           valid: false,
           errors: [
-            { field: "column1", message: "Expected type 'number', got 'string'" },
+            {
+              field: "column1",
+              message: "Expected type 'number', got 'string'",
+            },
             { field: "column3", message: "Missing required field" },
-          ]
+          ],
         });
       }
     };
-    
+
     simulateValidation();
   };
 
   const loadSampleSchema = () => {
     const sampleSchema = {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "type": "object",
-      "properties": {
-        "id": { "type": "integer" },
-        "name": { "type": "string" },
-        "age": { "type": "integer", "minimum": 0 },
-        "email": { "type": "string", "format": "email" },
-        "categories": {
-          "type": "array",
-          "items": { "type": "string" }
-        }
+      $schema: "http://json-schema.org/draft-07/schema#",
+      type: "object",
+      properties: {
+        id: { type: "integer" },
+        name: { type: "string" },
+        age: { type: "integer", minimum: 0 },
+        email: { type: "string", format: "email" },
+        categories: {
+          type: "array",
+          items: { type: "string" },
+        },
       },
-      "required": ["id", "name", "email"]
+      required: ["id", "name", "email"],
     };
-    
+
     setSchemaText(JSON.stringify(sampleSchema, null, 2));
   };
 
-  const selectedDataset = datasets?.find(d => d.id === selectedDatasetId);
+  const selectedDataset = datasets?.find((d) => d.id === selectedDatasetId);
 
   // For demo, we'll use this state to simulate validation results
   const [validationResults, setValidationResults] = useState<{
     valid: boolean;
-    errors?: { field: string, message: string }[];
+    errors?: { field: string; message: string }[];
   } | null>(null);
 
   return (
@@ -126,7 +136,8 @@ export default function Validation() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Schema Validation</h1>
         <p className="text-neutral-600 max-w-3xl">
-          Validate your datasets against a predefined schema to ensure data integrity and consistency.
+          Validate your datasets against a predefined schema to ensure data
+          integrity and consistency.
         </p>
       </div>
 
@@ -136,48 +147,80 @@ export default function Validation() {
             value: "validation",
             label: (
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 Validation
               </div>
-            )
+            ),
           },
           {
             value: "migration",
             label: (
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
                   <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                  <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 Migration
               </div>
-            )
+            ),
           },
           {
             value: "analysis",
             label: (
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
                   <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
                   <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
                 </svg>
                 Analysis
               </div>
-            )
+            ),
           },
           {
             value: "my-datasets",
             label: (
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 My Datasets
               </div>
-            )
-          }
+            ),
+          },
         ]}
         value={activeTab}
         onChange={setActiveTab}
@@ -204,26 +247,31 @@ export default function Validation() {
                       key={dataset.id}
                       onClick={() => setSelectedDatasetId(dataset.id)}
                       className={`w-full text-left p-2 rounded-md text-sm ${
-                        selectedDatasetId === dataset.id 
-                          ? 'bg-secondary text-white' 
-                          : 'hover:bg-neutral-100'
+                        selectedDatasetId === dataset.id
+                          ? "bg-secondary text-white"
+                          : "hover:bg-neutral-100"
                       }`}
                     >
-                      <div className="font-medium line-clamp-1">{dataset.name}</div>
+                      <div className="font-medium line-clamp-1">
+                        {dataset.name}
+                      </div>
                       <div className="text-xs opacity-80 line-clamp-1">
-                        {dataset.filesCount || 0} files • {dataset.currentPlatform}
+                        {dataset.filesCount || 0} files •{" "}
+                        {dataset.currentPlatform}
                       </div>
                     </button>
                   ))}
                 </div>
               ) : (
-                <div className="text-neutral-500 text-sm">No datasets available</div>
+                <div className="text-neutral-500 text-sm">
+                  No datasets available
+                </div>
               )}
-              
+
               <div className="mt-4 pt-4 border-t border-neutral-200">
-                <Button 
+                <Button
                   onClick={loadSampleSchema}
-                  variant="outline" 
+                  variant="outline"
                   className="w-full"
                 >
                   Load Sample Schema
@@ -238,14 +286,14 @@ export default function Validation() {
             <CardHeader>
               <CardTitle>
                 Schema Validation
-                {selectedDataset ? `: ${selectedDataset.name}` : ''}
+                {selectedDataset ? `: ${selectedDataset.name}` : ""}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 gap-6">
                 <div>
                   <Label htmlFor="schema">Schema (JSON or YAML)</Label>
-                  <Textarea 
+                  <Textarea
                     id="schema"
                     placeholder="Paste your schema here or load a sample"
                     className="font-mono h-64"
@@ -253,8 +301,8 @@ export default function Validation() {
                     onChange={(e) => setSchemaText(e.target.value)}
                   />
                   <div className="mt-2 flex items-center">
-                    <Switch 
-                      id="strict-mode" 
+                    <Switch
+                      id="strict-mode"
                       checked={strictMode}
                       onCheckedChange={setStrictMode}
                     />
@@ -265,7 +313,7 @@ export default function Validation() {
                 </div>
 
                 <div className="flex justify-end">
-                  <Button 
+                  <Button
                     variant="secondary"
                     disabled={!selectedDatasetId || !schemaText.trim()}
                     onClick={handleValidate}
@@ -276,24 +324,37 @@ export default function Validation() {
                 </div>
 
                 {validationResults && (
-                  <div className={`mt-4 p-4 rounded-md ${
-                    validationResults.valid 
-                      ? 'bg-green-50 border border-green-200' 
-                      : 'bg-red-50 border border-red-200'
-                  }`}>
-                    <h3 className={`text-lg font-medium ${
-                      validationResults.valid ? 'text-green-800' : 'text-red-800'
-                    }`}>
-                      {validationResults.valid ? 'Validation Successful' : 'Validation Failed'}
+                  <div
+                    className={`mt-4 p-4 rounded-md ${
+                      validationResults.valid
+                        ? "bg-green-50 border border-green-200"
+                        : "bg-red-50 border border-red-200"
+                    }`}
+                  >
+                    <h3
+                      className={`text-lg font-medium ${
+                        validationResults.valid
+                          ? "text-green-800"
+                          : "text-red-800"
+                      }`}
+                    >
+                      {validationResults.valid
+                        ? "Validation Successful"
+                        : "Validation Failed"}
                     </h3>
-                    
+
                     {!validationResults.valid && validationResults.errors && (
                       <div className="mt-2">
-                        <h4 className="font-medium text-red-800 mb-2">Errors:</h4>
+                        <h4 className="font-medium text-red-800 mb-2">
+                          Errors:
+                        </h4>
                         <ul className="list-disc pl-5 space-y-1">
                           {validationResults.errors.map((error, index) => (
                             <li key={index} className="text-red-700">
-                              <span className="font-medium">{error.field}:</span> {error.message}
+                              <span className="font-medium">
+                                {error.field}:
+                              </span>{" "}
+                              {error.message}
                             </li>
                           ))}
                         </ul>

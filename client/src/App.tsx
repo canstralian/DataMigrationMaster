@@ -22,7 +22,7 @@ function Router() {
       <Route path="/schema" component={Schema} />
       <Route path="/my-datasets" component={MyDatasets} />
       <Route path="/transform" component={Transform} />
-      
+
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

@@ -1,10 +1,10 @@
-import Anthropic from '@anthropic-ai/sdk';
+import Anthropic from "@anthropic-ai/sdk";
 
 // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
-const MODEL_NAME = 'claude-3-7-sonnet-20250219';
+const MODEL_NAME = "claude-3-7-sonnet-20250219";
 
 const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || 'dummy-key', // Fallback for development
+  apiKey: process.env.ANTHROPIC_API_KEY || "dummy-key", // Fallback for development
 });
 
 export interface DatasetAnalysisResult {
@@ -29,7 +29,7 @@ export async function analyzeDataset(
   datasetName: string,
   description: string,
   metadata: Record<string, any>,
-  sampleData: string
+  sampleData: string,
 ): Promise<DatasetAnalysisResult> {
   try {
     const prompt = `
@@ -60,14 +60,14 @@ export async function analyzeDataset(
     const response = await anthropic.messages.create({
       model: MODEL_NAME,
       max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: "user", content: prompt }],
     });
 
     // Extract the JSON from the response
     const content = response.content[0].text;
-    const jsonMatch = content.match(/```json\n([\s\S]*)\n```/) || 
-                       content.match(/\{[\s\S]*\}/);
-                       
+    const jsonMatch =
+      content.match(/```json\n([\s\S]*)\n```/) || content.match(/\{[\s\S]*\}/);
+
     if (jsonMatch) {
       const jsonStr = jsonMatch[1] || jsonMatch[0];
       return JSON.parse(jsonStr) as DatasetAnalysisResult;
@@ -83,7 +83,7 @@ export async function analyzeDataset(
       usability: 0,
       issues: ["Analysis failed"],
       recommendations: ["Try again with a smaller sample"],
-      metrics: {}
+      metrics: {},
     };
   }
 }
@@ -100,7 +100,7 @@ export async function generateDatasetCard(
   datasetName: string,
   description: string,
   metadata: Record<string, any>,
-  analysis?: DatasetAnalysisResult
+  analysis?: DatasetAnalysisResult,
 ): Promise<string> {
   try {
     const prompt = `
@@ -109,7 +109,7 @@ export async function generateDatasetCard(
       Dataset Name: ${datasetName}
       Description: ${description}
       Metadata: ${JSON.stringify(metadata, null, 2)}
-      ${analysis ? `Analysis: ${JSON.stringify(analysis, null, 2)}` : ''}
+      ${analysis ? `Analysis: ${JSON.stringify(analysis, null, 2)}` : ""}
       
       Follow the format of high-quality Hugging Face dataset cards, including:
       - Dataset summary
@@ -127,20 +127,20 @@ export async function generateDatasetCard(
     const response = await anthropic.messages.create({
       model: MODEL_NAME,
       max_tokens: 2048,
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: "user", content: prompt }],
     });
 
     return response.content[0].text;
   } catch (error) {
     console.error("Error generating dataset card:", error);
-    
+
     // Fallback dataset card if the API fails
     return `---
 datasets:
-- ${datasetName.toLowerCase().replace(/ /g, '-')}
+- ${datasetName.toLowerCase().replace(/ /g, "-")}
 language:
-- ${metadata.language || 'en'}
-license: ${metadata.license || 'unknown'}
+- ${metadata.language || "en"}
+license: ${metadata.license || "unknown"}
 ---
 
 # Dataset Card for ${datasetName}
@@ -151,7 +151,7 @@ ${description}
 
 ### Dataset Summary
 
-A dataset for ${metadata.categories?.join(', ') || 'various applications'}.
+A dataset for ${metadata.categories?.join(", ") || "various applications"}.
 
 ## Dataset Structure
 
@@ -171,7 +171,7 @@ A dataset for ${metadata.categories?.join(', ') || 'various applications'}.
 
 ### License
 
-${metadata.license || 'License information not provided.'}
+${metadata.license || "License information not provided."}
 
 ## Additional Information
 

@@ -1,5 +1,5 @@
-URL: https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub
----
+## URL: https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub
+
 menu
 
 [Skip to\\
@@ -13,40 +13,38 @@ Create
 search​
 
 - [explore\\
-\\
-Home](https://www.kaggle.com/)
+  \\
+  Home](https://www.kaggle.com/)
 
-- [emoji\_events\\
-\\
-Competitions](https://www.kaggle.com/competitions)
+- [emoji_events\\
+  \\
+  Competitions](https://www.kaggle.com/competitions)
 
-- [table\_chart\\
-\\
-Datasets](https://www.kaggle.com/datasets)
+- [table_chart\\
+  \\
+  Datasets](https://www.kaggle.com/datasets)
 
 - [tenancy\\
-\\
-Models](https://www.kaggle.com/models)
+  \\
+  Models](https://www.kaggle.com/models)
 
 - [code\\
-\\
-Code](https://www.kaggle.com/code)
+  \\
+  Code](https://www.kaggle.com/code)
 
 - [comment\\
-\\
-Discussions](https://www.kaggle.com/discussions)
+  \\
+  Discussions](https://www.kaggle.com/discussions)
 
 - [school\\
-\\
-Learn](https://www.kaggle.com/learn)
+  \\
+  Learn](https://www.kaggle.com/learn)
 
+- [expand_more\\
+  \\
+  More](https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub#)
 
-- [expand\_more\\
-\\
-More](https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub#)
-
-
-auto\_awesome\_motion
+auto_awesome_motion
 
 View Active Events
 
@@ -64,13 +62,13 @@ search​
 
 [Register](https://www.kaggle.com/account/login?phase=startRegisterTab&returnUrl=%2Fcode%2Fkushagrit%2Fpush-dataset-to-huggingface-hub)
 
-[Kushagri Tandon's profile](https://www.kaggle.com/kushagrit) Kushagri Tandon  · 2y ago · 461 views
+[Kushagri Tandon's profile](https://www.kaggle.com/kushagrit) Kushagri Tandon · 2y ago · 461 views
 
-arrow\_drop\_up1
+arrow_drop_up1
 
 [Copy & Edit](https://www.kaggle.com/kernels/fork-version/140568711)7
 
-more\_vert
+more_vert
 
 # Push Dataset to Huggingface Hub
 
@@ -78,11 +76,11 @@ more\_vert
 
 [Notebook](https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub/notebook) [Input](https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub/input) [Output](https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub/output) [Logs](https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub/log) [Comments (0)](https://www.kaggle.com/code/kushagrit/push-dataset-to-huggingface-hub/comments)
 
-historyVersion 2 of 2chevron\_right
+historyVersion 2 of 2chevron_right
 
 ## Runtime
 
-play\_arrow
+play_arrow
 
 1m 2s
 
@@ -206,13 +204,13 @@ df.head()
 
 Out\[3\]:
 
-|  | text | label |
-| --- | --- | --- |
-| 0 | Budget to set scene for election Gordon Brown ... | politics |
-| 1 | Army chiefs in regiments decision Military chi... | politics |
-| 2 | Howard denies split over ID cards Michael Howa... | politics |
-| 3 | Observers to monitor UK election Ministers wil... | politics |
-| 4 | Kilroy names election seat target Ex-chat show... | politics |
+|     | text                                              | label    |
+| --- | ------------------------------------------------- | -------- |
+| 0   | Budget to set scene for election Gordon Brown ... | politics |
+| 1   | Army chiefs in regiments decision Military chi... | politics |
+| 2   | Howard denies split over ID cards Michael Howa... | politics |
+| 3   | Observers to monitor UK election Ministers wil... | politics |
+| 4   | Kilroy names election seat target Ex-chat show... | politics |
 
 In \[4\]:
 
@@ -333,19 +331,19 @@ train_df
 
 Out\[11\]:
 
-|  | text | label |
-| --- | --- | --- |
-| 1509 | Chinese wine tempts Italy's Illva Italy's Illv... | 0 |
-| 45 | Labour chooses Manchester The Labour Party wil... | 2 |
-| 64 | Iran budget seeks state sell-offs Iran's presi... | 0 |
-| 1596 | Roundabout continues nostalgia trip The new bi... | 1 |
-| 680 | US charity anthem is re-released We Are The Wo... | 1 |
-| ... | ... | ... |
-| 755 | Game warnings 'must be clearer' Violent video ... | 2 |
-| 451 | Blair ready to call election Tony Blair seems ... | 2 |
-| 1231 | Mourinho expects fight to finish Chelsea manag... | 3 |
-| 41 | India power shares jump on debut Shares in Ind... | 0 |
-| 29 | Critics back Aviator for Oscars Martin Scorses... | 1 |
+|      | text                                              | label |
+| ---- | ------------------------------------------------- | ----- |
+| 1509 | Chinese wine tempts Italy's Illva Italy's Illv... | 0     |
+| 45   | Labour chooses Manchester The Labour Party wil... | 2     |
+| 64   | Iran budget seeks state sell-offs Iran's presi... | 0     |
+| 1596 | Roundabout continues nostalgia trip The new bi... | 1     |
+| 680  | US charity anthem is re-released We Are The Wo... | 1     |
+| ...  | ...                                               | ...   |
+| 755  | Game warnings 'must be clearer' Violent video ... | 2     |
+| 451  | Blair ready to call election Tony Blair seems ... | 2     |
+| 1231 | Mourinho expects fight to finish Chelsea manag... | 3     |
+| 41   | India power shares jump on debut Shares in Ind... | 0     |
+| 29   | Critics back Aviator for Oscars Martin Scorses... | 1     |
 
 1512 rows × 2 columns
 
@@ -590,68 +588,32 @@ This Notebook has been released under the [Apache 2.0](http://www.apache.org/lic
 
 - ![](https://www.kaggle.com/static/images/kernel/viewer/input_light.svg)
 
-
-
-
-
-
-
 Input
 
 1 file
 
-
-
-
-arrow\_right\_alt
+arrow_right_alt
 
 - ![](https://www.kaggle.com/static/images/kernel/viewer/output_light.svg)
-
-
-
-
-
-
 
 Output
 
 0 files
 
-
-
-
-arrow\_right\_alt
+arrow_right_alt
 
 - ![](https://www.kaggle.com/static/images/kernel/viewer/logs_light.svg)
-
-
-
-
-
-
 
 Logs
 
 62.1 second run - successful
 
-
-
-
-arrow\_right\_alt
+arrow_right_alt
 
 - ![](https://www.kaggle.com/static/images/kernel/viewer/comments_light.svg)
-
-
-
-
-
-
 
 Comments
 
 0 comments
 
-
-
-
-arrow\_right\_alt
+arrow_right_alt

@@ -6,7 +6,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -15,7 +21,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dataset } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
@@ -51,11 +64,11 @@ const renameColumnSchema = z.object({
 const trainTestSplitSchema = z.object({
   trainSize: z.preprocess(
     (val) => parseFloat(val as string),
-    z.number().min(0.1).max(0.9)
+    z.number().min(0.1).max(0.9),
   ),
   testSize: z.preprocess(
     (val) => parseFloat(val as string),
-    z.number().min(0.1).max(0.9)
+    z.number().min(0.1).max(0.9),
   ),
   fileName: z.string().min(1, { message: "File name is required" }),
 });
@@ -71,9 +84,14 @@ interface DatasetTransformProps {
   files: DatasetFile[];
 }
 
-export default function DatasetTransform({ dataset, files }: DatasetTransformProps) {
+export default function DatasetTransform({
+  dataset,
+  files,
+}: DatasetTransformProps) {
   const { toast } = useToast();
-  const [transformType, setTransformType] = useState<TransformationType>(TransformationType.REMOVE_COLUMN);
+  const [transformType, setTransformType] = useState<TransformationType>(
+    TransformationType.REMOVE_COLUMN,
+  );
   const [isProcessing, setIsProcessing] = useState(false);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
 
@@ -108,12 +126,20 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
     resolver: zodResolver(sqlQuerySchema),
     defaultValues: {
       query: "SELECT * FROM table LIMIT 100",
-      databaseFile: files.find(f => f.type === "sqlite" || f.name.endsWith(".db") || f.name.endsWith(".sqlite"))?.name || "",
+      databaseFile:
+        files.find(
+          (f) =>
+            f.type === "sqlite" ||
+            f.name.endsWith(".db") ||
+            f.name.endsWith(".sqlite"),
+        )?.name || "",
     },
   });
 
   // Handle remove column submission
-  const onRemoveColumnSubmit = async (data: z.infer<typeof removeColumnSchema>) => {
+  const onRemoveColumnSubmit = async (
+    data: z.infer<typeof removeColumnSchema>,
+  ) => {
     const transformation: Transformation = {
       type: TransformationType.REMOVE_COLUMN,
       params: {
@@ -125,7 +151,9 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
   };
 
   // Handle rename column submission
-  const onRenameColumnSubmit = async (data: z.infer<typeof renameColumnSchema>) => {
+  const onRenameColumnSubmit = async (
+    data: z.infer<typeof renameColumnSchema>,
+  ) => {
     const transformation: Transformation = {
       type: TransformationType.RENAME_COLUMN,
       params: {
@@ -138,7 +166,9 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
   };
 
   // Handle train/test split submission
-  const onTrainTestSplitSubmit = async (data: z.infer<typeof trainTestSplitSchema>) => {
+  const onTrainTestSplitSubmit = async (
+    data: z.infer<typeof trainTestSplitSchema>,
+  ) => {
     const transformation: Transformation = {
       type: TransformationType.TRAIN_TEST_SPLIT,
       params: {
@@ -164,7 +194,10 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
   };
 
   // Process transformation request
-  const processTransformation = async (transformations: Transformation[], fileName: string) => {
+  const processTransformation = async (
+    transformations: Transformation[],
+    fileName: string,
+  ) => {
     setIsProcessing(true);
     try {
       const response = await apiRequest<{ code: string }>({
@@ -179,7 +212,8 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
       setGeneratedCode(response.code);
       toast({
         title: "Transformation Generated",
-        description: "Python code for dataset transformation has been generated",
+        description:
+          "Python code for dataset transformation has been generated",
       });
     } catch (error) {
       console.error("Error processing transformation:", error);
@@ -203,17 +237,27 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="remove_column" onValueChange={(value) => setTransformType(value as TransformationType)}>
+          <Tabs
+            defaultValue="remove_column"
+            onValueChange={(value) =>
+              setTransformType(value as TransformationType)
+            }
+          >
             <TabsList className="grid grid-cols-4 mb-4">
               <TabsTrigger value="remove_column">Remove Column</TabsTrigger>
               <TabsTrigger value="rename_column">Rename Column</TabsTrigger>
-              <TabsTrigger value="train_test_split">Train/Test Split</TabsTrigger>
+              <TabsTrigger value="train_test_split">
+                Train/Test Split
+              </TabsTrigger>
               <TabsTrigger value="sql_query">SQL Query</TabsTrigger>
             </TabsList>
 
             <TabsContent value="remove_column">
               <Form {...removeColumnForm}>
-                <form onSubmit={removeColumnForm.handleSubmit(onRemoveColumnSubmit)} className="space-y-4">
+                <form
+                  onSubmit={removeColumnForm.handleSubmit(onRemoveColumnSubmit)}
+                  className="space-y-4"
+                >
                   <FormField
                     control={removeColumnForm.control}
                     name="fileName"
@@ -221,21 +265,26 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                       <FormItem>
                         <FormLabel>File Name</FormLabel>
                         <FormControl>
-                          <Select 
-                            onValueChange={field.onChange} 
+                          <Select
+                            onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select file" />
                             </SelectTrigger>
                             <SelectContent>
-                              {files.filter(f => 
-                                f.type === "csv" || f.type === "parquet" || f.type === "json"
-                              ).map((file) => (
-                                <SelectItem key={file.id} value={file.name}>
-                                  {file.name}
-                                </SelectItem>
-                              ))}
+                              {files
+                                .filter(
+                                  (f) =>
+                                    f.type === "csv" ||
+                                    f.type === "parquet" ||
+                                    f.type === "json",
+                                )
+                                .map((file) => (
+                                  <SelectItem key={file.id} value={file.name}>
+                                    {file.name}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -250,15 +299,18 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                       <FormItem>
                         <FormLabel>Column Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter column name to remove" {...field} />
+                          <Input
+                            placeholder="Enter column name to remove"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
+                  <Button
+                    type="submit"
+                    className="w-full"
                     disabled={isProcessing}
                   >
                     {isProcessing ? "Processing..." : "Remove Column"}
@@ -269,7 +321,10 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
 
             <TabsContent value="rename_column">
               <Form {...renameColumnForm}>
-                <form onSubmit={renameColumnForm.handleSubmit(onRenameColumnSubmit)} className="space-y-4">
+                <form
+                  onSubmit={renameColumnForm.handleSubmit(onRenameColumnSubmit)}
+                  className="space-y-4"
+                >
                   <FormField
                     control={renameColumnForm.control}
                     name="fileName"
@@ -277,21 +332,26 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                       <FormItem>
                         <FormLabel>File Name</FormLabel>
                         <FormControl>
-                          <Select 
-                            onValueChange={field.onChange} 
+                          <Select
+                            onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select file" />
                             </SelectTrigger>
                             <SelectContent>
-                              {files.filter(f => 
-                                f.type === "csv" || f.type === "parquet" || f.type === "json"
-                              ).map((file) => (
-                                <SelectItem key={file.id} value={file.name}>
-                                  {file.name}
-                                </SelectItem>
-                              ))}
+                              {files
+                                .filter(
+                                  (f) =>
+                                    f.type === "csv" ||
+                                    f.type === "parquet" ||
+                                    f.type === "json",
+                                )
+                                .map((file) => (
+                                  <SelectItem key={file.id} value={file.name}>
+                                    {file.name}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -327,9 +387,9 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                       )}
                     />
                   </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
+                  <Button
+                    type="submit"
+                    className="w-full"
                     disabled={isProcessing}
                   >
                     {isProcessing ? "Processing..." : "Rename Column"}
@@ -340,7 +400,12 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
 
             <TabsContent value="train_test_split">
               <Form {...trainTestSplitForm}>
-                <form onSubmit={trainTestSplitForm.handleSubmit(onTrainTestSplitSubmit)} className="space-y-4">
+                <form
+                  onSubmit={trainTestSplitForm.handleSubmit(
+                    onTrainTestSplitSubmit,
+                  )}
+                  className="space-y-4"
+                >
                   <FormField
                     control={trainTestSplitForm.control}
                     name="fileName"
@@ -348,21 +413,26 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                       <FormItem>
                         <FormLabel>File Name</FormLabel>
                         <FormControl>
-                          <Select 
-                            onValueChange={field.onChange} 
+                          <Select
+                            onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select file" />
                             </SelectTrigger>
                             <SelectContent>
-                              {files.filter(f => 
-                                f.type === "csv" || f.type === "parquet" || f.type === "json"
-                              ).map((file) => (
-                                <SelectItem key={file.id} value={file.name}>
-                                  {file.name}
-                                </SelectItem>
-                              ))}
+                              {files
+                                .filter(
+                                  (f) =>
+                                    f.type === "csv" ||
+                                    f.type === "parquet" ||
+                                    f.type === "json",
+                                )
+                                .map((file) => (
+                                  <SelectItem key={file.id} value={file.name}>
+                                    {file.name}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -378,7 +448,13 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                         <FormItem>
                           <FormLabel>Train Size (0.1-0.9)</FormLabel>
                           <FormControl>
-                            <Input type="number" step="0.1" min="0.1" max="0.9" {...field} />
+                            <Input
+                              type="number"
+                              step="0.1"
+                              min="0.1"
+                              max="0.9"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -391,16 +467,22 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                         <FormItem>
                           <FormLabel>Test Size (0.1-0.9)</FormLabel>
                           <FormControl>
-                            <Input type="number" step="0.1" min="0.1" max="0.9" {...field} />
+                            <Input
+                              type="number"
+                              step="0.1"
+                              min="0.1"
+                              max="0.9"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
+                  <Button
+                    type="submit"
+                    className="w-full"
                     disabled={isProcessing}
                   >
                     {isProcessing ? "Processing..." : "Create Train/Test Split"}
@@ -411,7 +493,10 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
 
             <TabsContent value="sql_query">
               <Form {...sqlQueryForm}>
-                <form onSubmit={sqlQueryForm.handleSubmit(onSqlQuerySubmit)} className="space-y-4">
+                <form
+                  onSubmit={sqlQueryForm.handleSubmit(onSqlQuerySubmit)}
+                  className="space-y-4"
+                >
                   <FormField
                     control={sqlQueryForm.control}
                     name="databaseFile"
@@ -419,21 +504,26 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                       <FormItem>
                         <FormLabel>Database File</FormLabel>
                         <FormControl>
-                          <Select 
-                            onValueChange={field.onChange} 
+                          <Select
+                            onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select database file" />
                             </SelectTrigger>
                             <SelectContent>
-                              {files.filter(f => 
-                                f.type === "sqlite" || f.name.endsWith(".db") || f.name.endsWith(".sqlite")
-                              ).map((file) => (
-                                <SelectItem key={file.id} value={file.name}>
-                                  {file.name}
-                                </SelectItem>
-                              ))}
+                              {files
+                                .filter(
+                                  (f) =>
+                                    f.type === "sqlite" ||
+                                    f.name.endsWith(".db") ||
+                                    f.name.endsWith(".sqlite"),
+                                )
+                                .map((file) => (
+                                  <SelectItem key={file.id} value={file.name}>
+                                    {file.name}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -448,19 +538,19 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
                       <FormItem>
                         <FormLabel>SQL Query</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            placeholder="SELECT * FROM table LIMIT 100" 
+                          <Textarea
+                            placeholder="SELECT * FROM table LIMIT 100"
                             className="min-h-[100px]"
-                            {...field} 
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
+                  <Button
+                    type="submit"
+                    className="w-full"
                     disabled={isProcessing}
                   >
                     {isProcessing ? "Processing..." : "Execute SQL Query"}
@@ -488,12 +578,13 @@ export default function DatasetTransform({ dataset, files }: DatasetTransformPro
             </div>
           </CardContent>
           <CardFooter className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={() => navigator.clipboard.writeText(generatedCode)}>
+            <Button
+              variant="outline"
+              onClick={() => navigator.clipboard.writeText(generatedCode)}
+            >
               Copy to Clipboard
             </Button>
-            <Button onClick={() => setGeneratedCode(null)}>
-              Clear
-            </Button>
+            <Button onClick={() => setGeneratedCode(null)}>Clear</Button>
           </CardFooter>
         </Card>
       )}

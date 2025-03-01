@@ -10,8 +10,8 @@ pinned: true
 python_version: 3.11.6
 hf_oauth: true
 hf_oauth_scopes:
-- write-repos
-- manage-repos
+  - write-repos
+  - manage-repos
 license: apache-2.0
 thumbnail: >-
   https://cdn-uploads.huggingface.co/production/uploads/67bda0d043caf793e7275aac/Wblr892_d-XpxODAZ__4R.png
@@ -19,6 +19,7 @@ short_description: A web-based tool to migrate and analyze datasets with ease �
 ---
 
 # Github to Hugging Face Dataset Migration Tool 🐙2️⃣🤗
+
 This web-based tool allows you to migrate and analyze datasets from GitHub to the Hugging Face Datasets Hub. It provides a user-friendly interface for importing GitHub repositories, analyzing their contents, and exporting them to the Hub with automatic dataset card generation and validation.
 
 🏆 **Key Features:**

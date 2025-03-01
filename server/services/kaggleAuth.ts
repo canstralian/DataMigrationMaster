@@ -15,13 +15,13 @@ let kaggleCredentials: {
  */
 export function setKaggleCredentials(username: string, key: string): void {
   kaggleCredentials = { username, key };
-  
+
   // In a real implementation, you would store these credentials securely
   // For example, in environment variables or a secure credential store
-  
+
   // For demo purposes, we'll just set them in memory
   console.log(`Kaggle credentials set for user: ${username}`);
-  
+
   // These should also be set as environment variables for the process
   process.env.KAGGLE_USERNAME = username;
   process.env.KAGGLE_KEY = key;
@@ -31,7 +31,10 @@ export function setKaggleCredentials(username: string, key: string): void {
  * Get Kaggle API credentials
  * @returns Kaggle credentials if set, null otherwise
  */
-export function getKaggleCredentials(): { username: string; key: string } | null {
+export function getKaggleCredentials(): {
+  username: string;
+  key: string;
+} | null {
   return kaggleCredentials;
 }
 
@@ -50,7 +53,7 @@ export function clearKaggleCredentials(): void {
   kaggleCredentials = null;
   delete process.env.KAGGLE_USERNAME;
   delete process.env.KAGGLE_KEY;
-  console.log('Kaggle credentials cleared');
+  console.log("Kaggle credentials cleared");
 }
 
 /**
@@ -59,15 +62,17 @@ export function clearKaggleCredentials(): void {
  */
 export function getKaggleAuthHeaders(): Record<string, string> {
   if (!kaggleCredentials) {
-    throw new Error('Kaggle credentials not set');
+    throw new Error("Kaggle credentials not set");
   }
-  
+
   // Encode the credentials in Base64 for basic authentication
-  const credentials = Buffer.from(`${kaggleCredentials.username}:${kaggleCredentials.key}`).toString('base64');
-  
+  const credentials = Buffer.from(
+    `${kaggleCredentials.username}:${kaggleCredentials.key}`,
+  ).toString("base64");
+
   return {
-    'Authorization': `Basic ${credentials}`,
-    'Content-Type': 'application/json'
+    Authorization: `Basic ${credentials}`,
+    "Content-Type": "application/json",
   };
 }
 
@@ -77,13 +82,17 @@ export function getKaggleAuthHeaders(): Record<string, string> {
  */
 export function formatKaggleJson(): string {
   if (!kaggleCredentials) {
-    throw new Error('Kaggle credentials not set');
+    throw new Error("Kaggle credentials not set");
   }
-  
-  return JSON.stringify({
-    "username": kaggleCredentials.username,
-    "key": kaggleCredentials.key
-  }, null, 2);
+
+  return JSON.stringify(
+    {
+      username: kaggleCredentials.username,
+      key: kaggleCredentials.key,
+    },
+    null,
+    2,
+  );
 }
 
 /**
@@ -92,9 +101,9 @@ export function formatKaggleJson(): string {
  */
 export function generateKaggleCredentialsCode(): string {
   if (!kaggleCredentials) {
-    throw new Error('Kaggle credentials not set');
+    throw new Error("Kaggle credentials not set");
   }
-  
+
   return `# Set up Kaggle credentials
 import os
 import json
