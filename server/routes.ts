@@ -12,6 +12,7 @@ import {
 } from '@shared/schema';
 import * as kaggleAuth from './services/kaggleAuth';
 import * as kaggleTransform from './services/kaggleTransform';
+import { DatasetAnalysisResult } from './services/anthropic';
 
 // Create migration service
 const migrationService = new MigrationService(storage);
@@ -324,6 +325,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error generating dataset card:', error);
       res.status(500).json({ 
         message: 'Failed to generate dataset card', 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
+
+  // Kaggle Authentication Routes
+  app.post('/api/kaggle/auth', async (req, res) => {
+    try {
+      const authSchema = z.object({
+        username: z.string(),
+        key: z.string()
+      });
+
+      const result = authSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: 'Invalid Kaggle credentials', errors: result.error.format() });
+      }
+
+      const { username, key } = result.data;
+      
+      // Store the credentials
+      kaggleAuth.setKaggleCredentials(username, key);
+      
+      // Validate the credentials (this is mock validation in our demo)
+      const isValid = await kaggleTransform.validateKaggleCredentials(username, key);
+      
+      if (!isValid) {
+        kaggleAuth.clearKaggleCredentials();
+        return res.status(401).json({ message: 'Invalid Kaggle credentials' });
+      }
+      
+      res.json({ message: 'Kaggle credentials set successfully' });
+    } catch (error) {
+      console.error('Error setting Kaggle credentials:', error);
+      res.status(500).json({ 
+        message: 'Failed to set Kaggle credentials', 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
+
+  app.get('/api/kaggle/auth/status', (req, res) => {
+    const hasCredentials = kaggleAuth.hasKaggleCredentials();
+    res.json({ authenticated: hasCredentials });
+  });
+
+  app.delete('/api/kaggle/auth', (req, res) => {
+    kaggleAuth.clearKaggleCredentials();
+    res.json({ message: 'Kaggle credentials cleared successfully' });
+  });
+
+  // Kaggle Transformation Routes
+  app.post('/api/datasets/:id/transform', async (req, res) => {
+    try {
+      const datasetId = parseInt(req.params.id);
+      if (isNaN(datasetId)) {
+        return res.status(400).json({ message: 'Invalid dataset ID' });
+      }
+      
+      const dataset = await storage.getDataset(datasetId);
+      if (!dataset) {
+        return res.status(404).json({ message: 'Dataset not found' });
+      }
+
+      // Define schema for transform request
+      const transformRequestSchema = z.object({
+        transformations: z.array(
+          z.object({
+            type: z.enum([
+              kaggleTransform.TransformationType.REMOVE_COLUMN,
+              kaggleTransform.TransformationType.RENAME_COLUMN,
+              kaggleTransform.TransformationType.TRAIN_TEST_SPLIT,
+              kaggleTransform.TransformationType.SQL_QUERY
+            ]),
+            params: z.record(z.any())
+          })
+        ),
+        fileName: z.string()
+      });
+
+      const result = transformRequestSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: 'Invalid transformation request', errors: result.error.format() });
+      }
+
+      const { transformations, fileName } = result.data;
+      
+      // Check if Kaggle credentials are set
+      if (!kaggleAuth.hasKaggleCredentials()) {
+        return res.status(401).json({ message: 'Kaggle credentials not set' });
+      }
+
+      // For now, just generate the transformation code
+      // In a real implementation, this would execute the code and return the result
+      const datasetRef = dataset.originalUrl || '';
+      const code = kaggleTransform.generateTransformationCode(transformations, datasetRef, fileName);
+      
+      // Return the generated code
+      res.json({ 
+        message: 'Transformation code generated successfully',
+        code,
+        transformations
+      });
+    } catch (error) {
+      console.error('Error transforming dataset:', error);
+      res.status(500).json({ 
+        message: 'Failed to transform dataset', 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
+
+  // Generate Python setup code for Kaggle credentials
+  app.get('/api/kaggle/auth/setup-code', (req, res) => {
+    try {
+      if (!kaggleAuth.hasKaggleCredentials()) {
+        return res.status(401).json({ message: 'Kaggle credentials not set' });
+      }
+      
+      const code = kaggleAuth.generateKaggleCredentialsCode();
+      res.json({ code });
+    } catch (error) {
+      console.error('Error generating Kaggle credentials code:', error);
+      res.status(500).json({ 
+        message: 'Failed to generate Kaggle credentials code', 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
+
+  // Get kaggle.json content
+  app.get('/api/kaggle/auth/kaggle-json', (req, res) => {
+    try {
+      if (!kaggleAuth.hasKaggleCredentials()) {
+        return res.status(401).json({ message: 'Kaggle credentials not set' });
+      }
+      
+      const json = kaggleAuth.formatKaggleJson();
+      res.json({ json });
+    } catch (error) {
+      console.error('Error generating kaggle.json:', error);
+      res.status(500).json({ 
+        message: 'Failed to generate kaggle.json', 
         error: error instanceof Error ? error.message : 'Unknown error' 
       });
     }
