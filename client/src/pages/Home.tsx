@@ -123,11 +123,12 @@ export default function Home() {
           <div className="col-span-3 text-center py-8">
             <h3 className="text-lg font-medium mb-2">No datasets found</h3>
             <p className="text-neutral-500 mb-4">Get started by importing a dataset or creating a new one</p>
-            <Link href="/migration">
-              <a className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-secondary hover:bg-secondary/90">
-                Import Dataset
-              </a>
-            </Link>
+            <button
+              onClick={() => navigate('/migration')}
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-secondary hover:bg-secondary/90"
+            >
+              Import Dataset
+            </button>
           </div>
         )}
       </div>
@@ -135,46 +136,51 @@ export default function Home() {
       <div className="mt-8 bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/migration">
-            <a className="bg-white border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-2 text-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M13 7H7v6h6V7z" />
-                  <path fillRule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clipRule="evenodd" />
-                </svg>
-                <h3 className="font-medium">Migrate Dataset</h3>
-              </div>
-              <p className="text-sm text-neutral-600">
-                Transfer datasets between GitHub, Kaggle, and Hugging Face Hub
-              </p>
-            </a>
-          </Link>
-          <Link href="/analysis">
-            <a className="bg-white border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-2 text-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-                </svg>
-                <h3 className="font-medium">Analyze Dataset</h3>
-              </div>
-              <p className="text-sm text-neutral-600">
-                Perform AI-powered analysis on your datasets
-              </p>
-            </a>
-          </Link>
-          <Link href="/validation">
-            <a className="bg-white border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-2 text-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <h3 className="font-medium">Validate Dataset</h3>
-              </div>
-              <p className="text-sm text-neutral-600">
-                Check if your dataset matches expected schema structure
-              </p>
-            </a>
-          </Link>
+          <div 
+            className="bg-white border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => navigate('/migration')}
+          >
+            <div className="flex items-center mb-2 text-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M13 7H7v6h6V7z" />
+                <path fillRule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clipRule="evenodd" />
+              </svg>
+              <h3 className="font-medium">Migrate Dataset</h3>
+            </div>
+            <p className="text-sm text-neutral-600">
+              Transfer datasets between GitHub, Kaggle, and Hugging Face Hub
+            </p>
+          </div>
+
+          <div 
+            className="bg-white border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => navigate('/analysis')}
+          >
+            <div className="flex items-center mb-2 text-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+              </svg>
+              <h3 className="font-medium">Analyze Dataset</h3>
+            </div>
+            <p className="text-sm text-neutral-600">
+              Perform AI-powered analysis on your datasets
+            </p>
+          </div>
+
+          <div 
+            className="bg-white border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => navigate('/validation')}
+          >
+            <div className="flex items-center mb-2 text-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              <h3 className="font-medium">Validate Dataset</h3>
+            </div>
+            <p className="text-sm text-neutral-600">
+              Check if your dataset matches expected schema structure
+            </p>
+          </div>
         </div>
       </div>
     </div>
