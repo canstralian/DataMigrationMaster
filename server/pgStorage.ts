@@ -147,11 +147,11 @@ export class PgStorage implements IStorage {
     
     values.push(id);
     
-    // Execute the query using prepared statement
+    // Execute the query using prepared statement with dynamic SET clause
     const setClause = setClauses.join(', ');
     const result = await sql`
       UPDATE datasets 
-      SET ${sql.unsafe(setClause)} 
+      SET ${sql.__dangerous__rawValue(setClause)} 
       WHERE id = ${id}
       RETURNING *
     `;
@@ -269,15 +269,15 @@ export class PgStorage implements IStorage {
     
     values.push(id);
     
-    // Execute the query using tagged template literal
-    const queryText = `
+    // Execute the query using prepared statement with dynamic SET clause
+    const setClause = setClauses.join(', ');
+    const result = await sql`
       UPDATE migration_jobs 
-      SET ${setClauses.join(', ')} 
-      WHERE id = $${paramIndex}
+      SET ${sql.__dangerous__rawValue(setClause)} 
+      WHERE id = ${id}
       RETURNING *
     `;
     
-    const result = await sql.query(queryText, values);
     if (result.length === 0) return undefined;
     
     return snakeToCamel(result[0]) as MigrationJob;
@@ -393,15 +393,15 @@ export class PgStorage implements IStorage {
     
     values.push(id);
     
-    // Execute the query using tagged template literal
-    const queryText = `
+    // Execute the query using prepared statement with dynamic SET clause
+    const setClause = setClauses.join(', ');
+    const result = await sql`
       UPDATE migration_steps 
-      SET ${setClauses.join(', ')} 
-      WHERE id = $${paramIndex}
+      SET ${sql.__dangerous__rawValue(setClause)} 
+      WHERE id = ${id}
       RETURNING *
     `;
     
-    const result = await sql.query(queryText, values);
     if (result.length === 0) return undefined;
     
     return snakeToCamel(result[0]) as MigrationStep;
@@ -519,15 +519,15 @@ export class PgStorage implements IStorage {
     
     values.push(id);
     
-    // Execute the query
-    const queryText = `
+    // Execute the query using prepared statement with dynamic SET clause
+    const setClause = setClauses.join(', ');
+    const result = await sql`
       UPDATE dataset_files 
-      SET ${setClauses.join(', ')} 
-      WHERE id = $${paramIndex}
+      SET ${sql.__dangerous__rawValue(setClause)} 
+      WHERE id = ${id}
       RETURNING *
     `;
     
-    const result = await sql.query(queryText, values);
     if (result.length === 0) return undefined;
     
     return snakeToCamel(result[0]) as DatasetFile;
@@ -615,15 +615,15 @@ export class PgStorage implements IStorage {
     
     values.push(id);
     
-    // Execute the query
-    const queryText = `
+    // Execute the query using prepared statement with dynamic SET clause
+    const setClause = setClauses.join(', ');
+    const result = await sql`
       UPDATE analysis_reports 
-      SET ${setClauses.join(', ')} 
-      WHERE id = $${paramIndex}
+      SET ${sql.__dangerous__rawValue(setClause)} 
+      WHERE id = ${id}
       RETURNING *
     `;
     
-    const result = await sql.query(queryText, values);
     if (result.length === 0) return undefined;
     
     return snakeToCamel(result[0]) as AnalysisReport;
