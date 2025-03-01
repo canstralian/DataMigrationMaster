@@ -287,7 +287,7 @@ export default function Analysis() {
                       <div className="h-24 bg-neutral-200 rounded"></div>
                       <div className="h-24 bg-neutral-200 rounded"></div>
                     </div>
-                  </div>
+                  </div>v>
                 ) : latestReport ? (
                   <AnalysisResults
                     report={latestReport}

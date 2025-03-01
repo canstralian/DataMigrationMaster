@@ -17,6 +17,26 @@ export interface DatasetAnalysisResult {
   metrics: Record<string, any>;
 }
 
+// Fallback analysis result when API is unavailable
+export const fallbackAnalysisResult: DatasetAnalysisResult = {
+  summary: "This is a placeholder analysis generated because the Anthropic API was unavailable.",
+  quality: 50,
+  completeness: 50,
+  usability: 50,
+  issues: [
+    "API credit balance is too low to perform a complete analysis",
+    "Some dataset fields may be missing or incomplete"
+  ],
+  recommendations: [
+    "Consider adding an Anthropic API key with sufficient credits",
+    "Review the dataset manually for completeness and quality"
+  ],
+  metrics: {
+    estimated_size: "Unknown",
+    fields_count: "Unknown"
+  }
+};
+
 /**
  * Analyzes a dataset using Claude AI
  * @param datasetName Name of the dataset
@@ -57,35 +77,45 @@ export async function analyzeDataset(
       }
     `;
 
-    const response = await anthropic.messages.create({
-      model: MODEL_NAME,
-      max_tokens: 1024,
-      messages: [{ role: "user", content: prompt }],
-    });
+    try {
+      const response = await anthropic.messages.create({
+        model: MODEL_NAME,
+        max_tokens: 1024,
+        messages: [{ role: "user", content: prompt }],
+      });
 
-    // Extract the JSON from the response
-    const content = response.content[0].text;
-    const jsonMatch =
-      content.match(/```json\n([\s\S]*)\n```/) || content.match(/\{[\s\S]*\}/);
+      // Extract the JSON from the response
+      const content = response.content[0].text;
+      const jsonMatch =
+        content.match(/```json\n([\s\S]*)\n```/) || content.match(/\{[\s\S]*\}/);
 
-    if (jsonMatch) {
-      const jsonStr = jsonMatch[1] || jsonMatch[0];
-      return JSON.parse(jsonStr) as DatasetAnalysisResult;
+      if (jsonMatch) {
+        const jsonStr = jsonMatch[1] || jsonMatch[0];
+        return JSON.parse(jsonStr) as DatasetAnalysisResult;
+      }
+
+      throw new Error("Could not parse JSON from Claude response");
+    } catch (error) {
+      console.error("Error analyzing dataset:", error);
+      
+      // Check if error is related to API credits
+      if (error instanceof Error && 
+          error.message.includes("credit balance is too low")) {
+        console.log("Using fallback analysis due to insufficient API credits");
+        return fallbackAnalysisResult;
+      }
+      
+      // Default fallback for other errors
+      return {
+        summary: "Failed to analyze dataset",
+        quality: 0,
+        completeness: 0,
+        usability: 0,
+        issues: ["Analysis failed"],
+        recommendations: ["Try again with a smaller sample"],
+        metrics: {},
+      };
     }
-
-    throw new Error("Could not parse JSON from Claude response");
-  } catch (error) {
-    console.error("Error analyzing dataset:", error);
-    return {
-      summary: "Failed to analyze dataset",
-      quality: 0,
-      completeness: 0,
-      usability: 0,
-      issues: ["Analysis failed"],
-      recommendations: ["Try again with a smaller sample"],
-      metrics: {},
-    };
-  }
 }
 
 /**

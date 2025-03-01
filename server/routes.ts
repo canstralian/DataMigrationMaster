@@ -328,19 +328,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Import the anthropic service
-      const { generateDatasetCard } = await import("./services/anthropic");
+      const { generateDatasetCard, fallbackAnalysisResult } = await import("./services/anthropic");
 
       // Get the latest analysis report if available
       const reports = await storage.getAnalysisReports(datasetId);
       const latestReport = reports.length > 0 ? reports[0] : undefined;
+      
+      let reportData = latestReport?.report as DatasetAnalysisResult | undefined;
+      
+      // If we don't have a valid report, use a simple fallback template instead
+      if (!reportData || (reportData.quality === 0 && reportData.completeness === 0)) {
+        console.log("Using fallback analysis for dataset card generation");
+        reportData = fallbackAnalysisResult;
+      }
 
       // Generate the dataset card using Claude
-      const cardMarkdown = await generateDatasetCard(
-        dataset.name,
-        dataset.description || "",
-        dataset.metadata || {},
-        latestReport?.report as DatasetAnalysisResult | undefined,
-      );
+      let cardMarkdown;
+      try {
+        cardMarkdown = await generateDatasetCard(
+          dataset.name,
+          dataset.description || "",
+          dataset.metadata || {},
+          reportData,
+        );
+      } catch (apiError) {
+        console.error("API error during card generation:", apiError);
+        // If API fails, generate a basic card template
+        cardMarkdown = generateBasicCardTemplate(dataset, reportData);
+      }
 
       res.json({ markdown: cardMarkdown });
     } catch (error) {
@@ -351,6 +366,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+// Function to generate a basic dataset card template without using the API
+function generateBasicCardTemplate(dataset: any, analysisResult?: DatasetAnalysisResult): string {
+  const analysis = analysisResult || {
+    summary: "No analysis available",
+    quality: 0,
+    completeness: 0,
+    usability: 0,
+    issues: [],
+    recommendations: []
+  };
+  
+  return `---
+dataset_info:
+  name: ${dataset.name}
+  description: ${dataset.description || "No description provided"}
+---
+
+# Dataset Card for ${dataset.name}
+
+## Dataset Description
+
+${dataset.description || "No description provided"}
+
+## Dataset Summary
+
+${analysis.summary}
+
+## Dataset Structure
+
+Information about the dataset structure goes here.
+
+## Data Quality
+
+Quality score: ${analysis.quality}/100
+
+${analysis.issues.map(issue => `- ${issue}`).join('\n')}
+
+## Recommendations
+
+${analysis.recommendations.map(rec => `- ${rec}`).join('\n')}
+
+## Additional Information
+
+This card was generated automatically.
+`;
+}
 
   // Kaggle Authentication Routes
   app.post("/api/kaggle/auth", async (req, res) => {
