@@ -20,6 +20,10 @@ import {
   MigrationStatusEnum,
 } from "@shared/schema";
 
+// Import PostgreSQL storage implementation conditionally
+// It will be loaded dynamically when DATABASE_URL is available
+let pgStorageModule: any;
+
 // Extend storage interface with all needed CRUD operations
 export interface IStorage {
   // Original user methods
@@ -724,4 +728,40 @@ export class MemStorage implements IStorage {
   }
 }
 
+/**
+ * Factory function to create the appropriate storage implementation
+ * based on environment
+ */
+export async function createStorage(): Promise<IStorage> {
+  // If DATABASE_URL environment variable is set, use PostgreSQL storage
+  if (process.env.DATABASE_URL) {
+    try {
+      console.log("PostgreSQL database URL detected, initializing PG storage");
+      
+      // Import the database initialization function
+      const { initializeDatabase } = await import("./db");
+      
+      // Initialize the database and create tables if needed
+      const initialized = await initializeDatabase();
+      
+      if (initialized) {
+        // Import the PostgreSQL storage implementation
+        const { PgStorage } = await import("./pgStorage");
+        return new PgStorage();
+      } else {
+        console.warn("Failed to initialize PostgreSQL, falling back to in-memory storage");
+      }
+    } catch (error) {
+      console.error("Error initializing PostgreSQL storage:", error);
+      console.warn("Falling back to in-memory storage");
+    }
+  } else {
+    console.log("No DATABASE_URL found, using in-memory storage");
+  }
+  
+  // Default to in-memory storage
+  return new MemStorage();
+}
+
+// Create a default in-memory storage for backwards compatibility
 export const storage = new MemStorage();
