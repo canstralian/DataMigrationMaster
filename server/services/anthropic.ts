@@ -116,6 +116,7 @@ export async function analyzeDataset(
         metrics: {},
       };
     }
+  }
 }
 
 /**
