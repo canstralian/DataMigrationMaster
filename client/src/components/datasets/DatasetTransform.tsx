@@ -116,8 +116,8 @@ export default function DatasetTransform({
   const trainTestSplitForm = useForm<z.infer<typeof trainTestSplitSchema>>({
     resolver: zodResolver(trainTestSplitSchema),
     defaultValues: {
-      trainSize: "0.8",
-      testSize: "0.2",
+      trainSize: 0.8,
+      testSize: 0.2,
       fileName: files.length > 0 ? files[0].name : "",
     },
   });
