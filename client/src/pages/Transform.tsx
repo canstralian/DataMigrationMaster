@@ -62,7 +62,7 @@ export default function Transform() {
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="mb-8">
-        <Button variant="outline" onClick={() => navigate(-1)} className="mb-4">
+        <Button variant="outline" onClick={() => navigate("/")} className="mb-4">
           &larr; Back
         </Button>
         <h1 className="text-3xl font-bold mb-2">Dataset Transformations</h1>

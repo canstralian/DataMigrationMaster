@@ -200,16 +200,22 @@ export default function DatasetTransform({
   ) => {
     setIsProcessing(true);
     try {
-      const response = await apiRequest<{ code: string }>({
-        url: `/api/datasets/${dataset.id}/transform`,
+      const response = await fetch(`/api/datasets/${dataset.id}/transform`, {
         method: "POST",
-        data: {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           transformations,
           fileName,
-        },
+        }),
+        credentials: "include",
       });
 
-      setGeneratedCode(response.code);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setGeneratedCode(data.code);
       toast({
         title: "Transformation Generated",
         description:
