@@ -7,8 +7,11 @@ import {
   insertDatasetSchema, 
   insertMigrationJobSchema, 
   PlatformEnum, 
-  MigrationStatusEnum 
+  MigrationStatusEnum,
+  insertAnalysisReportSchema
 } from '@shared/schema';
+import * as kaggleAuth from './services/kaggleAuth';
+import * as kaggleTransform from './services/kaggleTransform';
 
 // Create migration service
 const migrationService = new MigrationService(storage);
@@ -275,8 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         completeness: analysisResult.completeness,
         usability: analysisResult.usability,
         report: analysisResult,
-        aiGenerated: true,
-        createdAt: new Date()
+        aiGenerated: true
       });
       
       res.status(201).json(report);
@@ -314,7 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dataset.name,
         dataset.description || '',
         dataset.metadata || {},
-        latestReport?.report
+        latestReport?.report as DatasetAnalysisResult | undefined
       );
       
       res.json({ markdown: cardMarkdown });
